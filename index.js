@@ -5,14 +5,12 @@ export default {
     }
 
     const body = await request.text();
-
     const event = request.headers.get("X-GitHub-Event");
     if (event !== "star") {
       return new Response("Ignoring non-star event");
     }
 
     const payload = JSON.parse(body);
-
     if (payload.action !== "created") {
       return new Response("OK");
     }
@@ -22,7 +20,7 @@ export default {
       sender: { login: user, html_url: url },
     } = payload;
 
-    const body = new URLSearchParams({
+    const params = new URLSearchParams({
       token: env.PUSHOVER_TOKEN,
       user: env.PUSHOVER_USER,
       message: `⭐ ${user} starred ${repo}!`,
@@ -32,7 +30,7 @@ export default {
 
     await fetch("https://api.pushover.net/1/messages.json", {
       method: "POST",
-      body,
+      body: params,
     });
   },
 };
