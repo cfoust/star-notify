@@ -1,0 +1,7 @@
+name = "star-notify"
+compatibility_date = "2025-04-01"
+main = "index.js"
+
+[vars]
+PUSHOVER_TOKEN = "agoh2mip1bqm7rv7kubukuoohoow1m"
+PUSHOVER_USER = "uzKbHvnkM4f5Pt9zMYHJxBp78ibqUW"
