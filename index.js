@@ -13,30 +13,28 @@ export default {
 
     const payload = JSON.parse(body);
 
-    if (payload.action === "created") {
-      // A new star was added
-      const repo = payload.repository.full_name;
-      const user = payload.sender.login;
-
-      const msg = `⭐ ${user} starred ${repo}!`;
-
-      await sendPushover(env, msg);
+    if (payload.action !== "created") {
+      return new Response("OK");
     }
 
-    return new Response("OK");
+    const {
+      repository: { full_name: repo },
+      sender: { login: user, html_url: url },
+    } = payload;
+
+    const body = new URLSearchParams({
+      token: env.PUSHOVER_TOKEN,
+      user: env.PUSHOVER_USER,
+      message: `⭐ ${user} starred ${repo}!`,
+      title: "New GitHub Star",
+      url,
+    });
+
+    await fetch("https://api.pushover.net/1/messages.json", {
+      method: "POST",
+      body,
+    });
   },
 };
 
-async function sendPushover(env, message) {
-  const body = new URLSearchParams({
-    token: env.PUSHOVER_TOKEN,
-    user: env.PUSHOVER_USER,
-    message,
-    title: "New GitHub Star",
-  });
-
-  await fetch("https://api.pushover.net/1/messages.json", {
-    method: "POST",
-    body,
-  });
-}
+async function sendPushover(env, message) {}
